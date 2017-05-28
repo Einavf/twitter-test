@@ -1,0 +1,16 @@
+[Unit]
+Description=mongoDB database
+Requires=docker.service
+After=docker.service
+
+[Service]
+User=centos
+Restart=on-failure
+RestartSec=10
+ExecStartPre=-/usr/bin/docker kill mongodb
+ExecStartPre=-/usr/bin/docker rm mongodb
+ExecStart=/usr/bin/docker run --name mongodb einavf/mongodb:v1
+ExecStop=-/usr/bin/docker stop mongodb
+
+[Install]
+WantedBy=multi-user.target

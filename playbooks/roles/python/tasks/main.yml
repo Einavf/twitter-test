@@ -1,0 +1,35 @@
+---
+
+- name: install the 'Development tools' package group
+  yum: name="@Development tools" state=present
+
+- name: Ensure dependencies are installed
+  yum: name={{ item }} state=present
+  with_items:
+    - zlib-devel
+    - bzip2-devel
+    - openssl-devel
+    - ncurses-devel
+    - readline-devel
+    - pcre-devel
+    - curl-devel
+    - sqlite-devel
+    - yum-utils
+    - python-setuptools
+    - python-setuptools
+    - supervisor
+
+#- name: Check if python is already installed
+#  stat: path=/usr/local/bin/python2.7
+#  register: python
+
+#- name: Download Python 3
+#  get_url:
+#        url=https://centos7.iuscommunity.org/ius-release.rpm
+#        dest=/usr/local/bin/python3
+ 
+#- name: install python pip
+#  yum: name={{ item }} state=present
+#  with_items:
+#    - python36u-pip
+#    - python36u-devel

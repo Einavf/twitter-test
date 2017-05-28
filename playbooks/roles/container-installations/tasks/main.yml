@@ -1,0 +1,89 @@
+- name: login to registry
+  shell: "docker login -e einav.friedman@kenshoo.com -p Predator77$ -u einavf https://hub.docker.com"
+
+- name: pull apache docker_image
+  shell: docker pull einavf/ubuntu_apache_server:v2
+
+- name: pull mongodb docker_image
+  shell: docker pull einavf/mongodb:v1
+
+#- name: run mongodb container
+#  shell: docker run  -p 27017:27017 --name mongodb -d einavf/mongodb:v1
+
+#- name: run apache2 server
+#  shell:  docker run -it -d -p 80:80 --name webserver einavf/ubuntu_apache_server:v2
+
+#- name: start apache server
+#  shell: docker exec webserver /etc/init.d/apache2 start
+
+#######################################################################
+#- name: run apache container
+#  docker:
+#    name: webserver
+#    image: "einavf/ubuntu_apache_server:v2"
+#    state: restarted
+#    publish_all_ports: yes
+
+#- name: mongodb
+#  docker:
+#    name: mongodb
+#    image: someuser/appimage
+#    state: reloaded
+#    pull: always
+#    links:
+#    - "einavf/mongodb"
+#    ports:
+#    - "27017:27017"
+
+#######################################################################
+
+
+# - name: create mongodb - systemd override file
+#   become: yes
+#   file:
+#      path: /etc/systemd/system/
+#      state: file
+#   when: ansible_distribution_major_version == "7"
+
+- name: add mongodb - systemd override
+  become: yes
+  copy:
+      src: mongodb.service
+      dest: /etc/systemd/system/mongodb.service
+  when: ansible_distribution_major_version == "7"
+
+
+# - name: create webserver - systemd override directory
+#   file:
+#     path: /etc/systemd/system/webserver.service.d
+#     state: directory
+#   when: ansible_distribution_major_version == "7"
+
+- name: add webserver - systemd override
+  copy:
+    src: webserver.service
+    dest: /etc/systemd/system/webserver.service
+  when: ansible_distribution_major_version == "7"
+
+
+- name: systemctl enable mongodb 
+  become: yes
+  command: systemctl enable mongodb  
+
+- name: systemctl enable webserver
+  become: yes
+  command: systemctl enable webserver   
+
+- name: systemctl daemon-reload 
+  become: yes
+  command: systemctl daemon-reload 
+
+- name: systemctl start mongodb
+  become: yes
+  command: systemctl start mongodb  
+
+- name: systemctl start webserver
+  become: yes  
+  command: systemctl start webserver  
+
+

@@ -1,0 +1,16 @@
+[Unit]
+Description=webserver
+Requires=docker.service
+After=docker.service
+
+[Service]
+User=centos
+Restart=on-failure
+RestartSec=10
+ExecStartPre=-/usr/bin/docker kill webserver
+ExecStartPre=-/usr/bin/docker rm webserver
+ExecStart=/usr/bin/docker run -it -d -p 80:80 --name webserver einavf/ubuntu_apache_server:v2 \ /etc/init.d/apache2 start
+ExecStop=-/usr/bin/docker stop webserver
+
+[Install]
+WantedBy=multi-user.target
